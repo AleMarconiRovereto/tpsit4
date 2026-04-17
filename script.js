@@ -1,87 +1,107 @@
 import { topBar } from "./components/topbar.js"
+import { hero } from "./components/hero.js"
+import { productGrid } from "./components/productGrid.js"
+import { homeInfo } from "./components/homeInfo.js"
+import { articoli } from "./components/articoli.js"
+import { contatti } from "./components/contatti.js"
 
 const renderPage = {
 
     renderHome: function () {
         renderComponents.renderTopbar();
-       
+        let containerPagina = document.getElementById("createDivPageContentContainer");
+        if (containerPagina) containerPagina.innerHTML = '';
+        hero.render();
+        homeInfo.renderInfo();
+        contatti.render();
     },
 
     renderShop: function () {
-
-        //da fare
+        renderComponents.renderTopbar();
+        let containerPagina = document.getElementById("createDivPageContentContainer");
+        if (containerPagina) containerPagina.innerHTML = '';
+        productGrid.renderShop();
     },
 
     renderArticoli: function () {
-
-        //da fare
+        renderComponents.renderTopbar();
+        let containerPagina = document.getElementById("createDivPageContentContainer");
+        if (containerPagina) containerPagina.innerHTML = '';
+        articoli.renderArticoli();
     }
-
-
 
 }
 
 export const utils = {
     removeByClass: function (classDaRimuovere) {
 
-       while (document.getElementsByClassName(classDaRimuovere).length > 0) {
+        while (document.getElementsByClassName(classDaRimuovere).length > 0) {
             document.getElementsByClassName(classDaRimuovere)[0].remove();
-       }
+        }
 
     },
 
     removeById: function (idDaRimuovere) {
-        document.getElementById(idDaRimuovere).remove();
+        let el = document.getElementById(idDaRimuovere);
+        if (el) el.remove();
     },
 
-    createDivPageContentContainer: function(){
-        if(document.getElementById("createDivPageContentContainer") == null){
+    createDivPageContentContainer: function () {
+        if (document.getElementById("createDivPageContentContainer") == null) {
             let pageContent = document.createElement("div");
             pageContent.setAttribute("class", "createDivPageContentContainer");
-            pageContent.id="createDivPageContentContainer";
+            pageContent.id = "createDivPageContentContainer";
             document.getElementById("pageContentMain").appendChild(pageContent);
         }
     }
 }
 
 export const navigator = {
-    routeToHome: function(){
-        history.pushState(null, "", "/");
-        utils.removeById("createDivPageContentContainer");
-        utils.createDivPageContentContainer();
-        renderPage.renderHome();
+    routeToHome: function () {
+        window.location.hash = "#/";
     },
 
-    routeToShop:function(){
-        history.pushState(null, "", "/shop");
+    routeToShop: function () {
+        window.location.hash = "#/shop";
+    },
+
+    routeToArticoli: function () {
+        window.location.hash = "#/articoli";
+    },
+
+    gestisciRotta: function () {
+        let rottaCorrente = window.location.hash.replace("#", "") || "/";
+
         utils.removeById("createDivPageContentContainer");
         utils.createDivPageContentContainer();
-        renderPage.renderShop();
-    },
-    routeToArticoli:function(){
-        history.pushState(null, "", "/articoli");
-        utils.removeById("createDivPageContentContainer");
-        utils.createDivPageContentContainer();
-        renderPage.renderArticoli();
-    },
+
+        if (rottaCorrente === "/" || rottaCorrente === "#") {
+            renderPage.renderHome();
+        } else if (rottaCorrente === "/shop") {
+            renderPage.renderShop();
+        } else if (rottaCorrente === "/articoli") {
+            renderPage.renderArticoli();
+        } else {
+            renderPage.renderHome();
+        }
+    }
 }
-
 
 const renderComponents = {
-
     renderTopbar: function () {
-        if(document.getElementById("menuOptionGrande") == null && document.getElementById("menuOptionGrande") == null){
-            topBar.renderMenuPiccolo();
-            topBar.renderMenuGrande();
-        }
-        
+        topBar.renderTutto();
     }
-    
 }
 
 
+window.addEventListener("hashchange", () => {
+    navigator.gestisciRotta();
+});
+
+
+window.addEventListener("DOMContentLoaded", () => {
+    navigator.gestisciRotta();
+});
 
 window.renderPage = renderPage;
-
-// questo è un sito sul giardinaggio con articoli e prodotti in vendita
-
+window.navigatorApp = navigator;

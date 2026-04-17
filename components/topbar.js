@@ -1,60 +1,82 @@
 
-import { utils, navigator } from "../script.js";
+import { navigator } from "../script.js";
 
-  export const topBar = {
+export const topBar = {
+    datiTopbar: {
+        nomeLogo: "BOTANICA ALE"
+    },
 
-
-   
-    vociMenu:[
-        {nome: "Home", target: ()=>{navigator.routeToHome()}},
-        {nome: "Shop", target: ()=>{navigator.routeToShop()}},
-        {nome: "Articoli", target: ()=>{navigator.routeToArticoli()}},
+    vociMenu: [
+        { nome: "Home", target: () => { navigator.routeToHome() } },
+        { nome: "Shop", target: () => { navigator.routeToShop() } },
+        { nome: "Articoli", target: () => { navigator.routeToArticoli() } },
     ],
 
-    renderMenuTenda: function(){
-    
-        for(let i = 0; i < this.vociMenu.length; i++){
+    renderLogo: function () {
+        let logo = document.createElement("div");
+        logo.className = "logoTopbar";
+        logo.innerText = this.datiTopbar.nomeLogo;
+        document.getElementById("topbar").appendChild(logo);
+    },
+
+    renderMenuTenda: function () {
+        if (document.getElementById("menuTendaContainer")) return;
+
+        let menuTendaContainer = document.createElement("div");
+        menuTendaContainer.id = "menuTendaContainer";
+        menuTendaContainer.className = "menuTendaContainer";
+
+        this.vociMenu.forEach(voce => {
             let menuOption = document.createElement("div");
-            menuOption.setAttribute("class", "menuOptionTenda");
-            document.getElementById("menuOptionPiccolo").appendChild(menuOption);
-            menuOption.innerText = this.vociMenu[i].nome;
-            menuOption.onclick = () =>{
-                this.vociMenu[i].target();
-            }
-        }
+            menuOption.className = "menuOptionTenda";
+            menuOption.innerText = voce.nome;
+            menuOption.onclick = () => voce.target();
+            menuTendaContainer.appendChild(menuOption);
+        });
+
+        document.getElementById("menuOptionPiccolo").appendChild(menuTendaContainer);
     },
 
-    renderMenuPiccolo: function(){
-        let menuOptionPiccolo = document.createElement("div");    
+    renderMenuPiccolo: function () {
+        if (document.getElementById("menuOptionPiccolo")) return;
+
+        let menuOptionPiccolo = document.createElement("div");
         menuOptionPiccolo.id = "menuOptionPiccolo";
+        menuOptionPiccolo.className = "menuOptionPiccolo";
+        menuOptionPiccolo.innerText = "MENU";
+
+        menuOptionPiccolo.onmouseenter = () => this.renderMenuTenda();
+        menuOptionPiccolo.onmouseleave = () => {
+            let container = document.getElementById("menuTendaContainer");
+            if (container) container.remove();
+        };
+
         document.getElementById("topbar").appendChild(menuOptionPiccolo);
-        menuOptionPiccolo.innerText = "Menu"
-        menuOptionPiccolo.setAttribute("class", "menuOptionPiccolo");
-        menuOptionPiccolo.onmouseenter = ()=>{this.renderMenuTenda()};
-        menuOptionPiccolo.onmouseleave = ()=>{utils.removeByClass('menuOptionTenda')};
-        
     },
 
-    renderMenuGrande: function(){
+    renderMenuGrande: function () {
+        if (document.getElementById("menuOptionGrande")) return;
+
         let menuOptionGrande = document.createElement("div");
         menuOptionGrande.id = "menuOptionGrande";
-        document.getElementById("topbar").appendChild(menuOptionGrande);
-        for(let i = 0; i < this.vociMenu.length; i++){
+        menuOptionGrande.className = "menuOptionGrande";
+
+        this.vociMenu.forEach(voce => {
             let menuOption = document.createElement("div");
-            menuOption.setAttribute("class", "menuOption");
-            document.getElementById("menuOptionGrande").appendChild(menuOption);
-            menuOption.innerText = this.vociMenu[i].nome;
-            menuOption.onclick = () =>{
-                this.vociMenu[i].target();
-            }
-        }
-        menuOptionGrande.setAttribute("class", "menuOptionGrande");
+            menuOption.className = "menuOption";
+            menuOption.innerText = voce.nome;
+            menuOption.onclick = () => voce.target();
+            menuOptionGrande.appendChild(menuOption);
+        });
+
+        document.getElementById("topbar").appendChild(menuOptionGrande);
+    },
+
+    renderTutto: function () {
+        let topbar = document.getElementById("topbar");
+        topbar.innerHTML = "";
+        this.renderLogo();
+        this.renderMenuGrande();
+        this.renderMenuPiccolo();
     }
-        
-    
-    
-
-
 }
-
-
